@@ -192,7 +192,7 @@
           <p>
             We propose <strong>COMPOSE</strong>, a dual-graph encoder that fuses citation context and formal theorem
             structure to condition a DeepSeek-Math-7B decoder. COMPOSE achieves the best retrieval performance,
-            recovering the correct future paper in the top 10 in <strong>75.0%</strong> of cases on the
+            recovering the correct future paper in the top 10 in <strong>50.5%</strong> of cases on the
             confidence-stratified evaluation subset.
           </p>
         </div>
@@ -366,7 +366,7 @@
           <p>
             We evaluate on the confidence-stratified subset, where each anchor paper has at least one
             high-confidence Mathlib match — the regime where using both encoders matters most. COMPOSE achieves
-            H@10 = <strong>0.750</strong>, compared to 0.640 for GIANTS and 0.520 for GoAI. The Gap column
+            H@10 = <strong>0.505</strong>, compared to 0.410 for CoI-GPT4 and 0.080 for GIANTS. The Gap column
             measures cosine similarity to the target minus cosine to 500 random negatives.
           </p>
         </div>
@@ -386,44 +386,44 @@
               <tbody>
                 <tr class="has-background-primary-light">
                   <td><strong>COMPOSE (ours)</strong></td>
-                  <td class="has-text-centered"><strong>0.750</strong></td>
-                  <td class="has-text-centered"><strong>0.845</strong></td>
+                  <td class="has-text-centered"><strong>0.505</strong></td>
+                  <td class="has-text-centered"><strong>0.808</strong></td>
                   <td class="has-text-centered"><strong>0.240</strong></td>
                 </tr>
                 <tr>
-                  <td>Prompt-only (DeepSeek-Math 7B)</td>
-                  <td class="has-text-centered">0.625</td>
-                  <td class="has-text-centered">0.905</td>
-                  <td class="has-text-centered">0.211</td>
-                </tr>
-                <tr>
-                  <td>GIANTS</td>
-                  <td class="has-text-centered">0.640</td>
-                  <td class="has-text-centered">0.940</td>
-                  <td class="has-text-centered">0.207</td>
-                </tr>
-                <tr>
-                  <td>GoAI (DeepSeek-Math 7B)</td>
-                  <td class="has-text-centered">0.520</td>
-                  <td class="has-text-centered">0.855</td>
-                  <td class="has-text-centered">0.202</td>
-                </tr>
-                <tr>
                   <td>CoI-GPT4</td>
-                  <td class="has-text-centered">0.448</td>
-                  <td class="has-text-centered">0.851</td>
+                  <td class="has-text-centered">0.410</td>
+                  <td class="has-text-centered">0.770</td>
                   <td class="has-text-centered">0.176</td>
                 </tr>
                 <tr>
                   <td>Text-only (LoRA)</td>
-                  <td class="has-text-centered">0.425</td>
-                  <td class="has-text-centered">0.760</td>
+                  <td class="has-text-centered">0.369</td>
+                  <td class="has-text-centered">0.738</td>
                   <td class="has-text-centered">0.177</td>
                 </tr>
                 <tr>
+                  <td>GoAI (DeepSeek-Math 7B)</td>
+                  <td class="has-text-centered">0.376</td>
+                  <td class="has-text-centered">0.680</td>
+                  <td class="has-text-centered">0.202</td>
+                </tr>
+                <tr>
+                  <td>Prompt-only (DeepSeek-Math 7B)</td>
+                  <td class="has-text-centered">0.348</td>
+                  <td class="has-text-centered">0.697</td>
+                  <td class="has-text-centered">0.211</td>
+                </tr>
+                <tr>
+                  <td>GIANTS</td>
+                  <td class="has-text-centered">0.080</td>
+                  <td class="has-text-centered">0.329</td>
+                  <td class="has-text-centered">0.207</td>
+                </tr>
+                <tr>
                   <td>Fixed NN (abstracts + main theorem)</td>
-                  <td class="has-text-centered">0.130</td>
-                  <td class="has-text-centered">0.510</td>
+                  <td class="has-text-centered">0.068</td>
+                  <td class="has-text-centered">0.392</td>
                   <td class="has-text-centered">0.108</td>
                 </tr>
               </tbody>
@@ -431,71 +431,56 @@
           </div>
         </div>
 
-        <div class="columns is-desktop is-centered">
-          <div class="column is-half">
-            <div class="box tw-h-full">
-              <h3 class="title is-5">Ablation Study</h3>
-              <div class="table-container">
-                <table class="table is-bordered is-narrow is-fullwidth tw-text-sm">
-                  <thead class="has-background-grey-lighter">
-                    <tr>
-                      <th>Model</th>
-                      <th class="has-text-centered">H@10</th>
-                      <th class="has-text-centered">H@100</th>
-                      <th class="has-text-centered">Gap</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="has-background-primary-light">
-                      <td><strong>Full graph (ours)</strong></td>
-                      <td class="has-text-centered"><strong>0.750</strong></td>
-                      <td class="has-text-centered"><strong>0.845</strong></td>
-                      <td class="has-text-centered"><strong>0.235</strong></td>
-                    </tr>
-                    <tr>
-                      <td>Paper-graph only (no G<sub>f</sub>)</td>
-                      <td class="has-text-centered">0.390</td>
-                      <td class="has-text-centered">—</td>
-                      <td class="has-text-centered">0.164</td>
-                    </tr>
-                    <tr>
-                      <td>Formal-graph only (no G<sub>s</sub>)</td>
-                      <td class="has-text-centered">0.510</td>
-                      <td class="has-text-centered">0.810</td>
-                      <td class="has-text-centered">0.141</td>
-                    </tr>
-                    <tr>
-                      <td>w/o bidirectional fusion</td>
-                      <td class="has-text-centered">0.195</td>
-                      <td class="has-text-centered">0.530</td>
-                      <td class="has-text-centered">0.090</td>
-                    </tr>
-                    <tr>
-                      <td>w/o stage-1 pretraining</td>
-                      <td class="has-text-centered">0.240</td>
-                      <td class="has-text-centered">0.505</td>
-                      <td class="has-text-centered">0.093</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="tw-text-xs tw-text-gray-500 tw-mt-3">
-                Removing G<sub>f</sub> drops H@10 from 0.750 to 0.390. Removing the bidirectional fusion
-                collapses it to 0.195, showing that cross-encoder interaction — not just the presence of both
-                encoders — drives the gain.
-              </p>
-            </div>
+        <div class="box">
+          <h3 class="title is-5">Ablation Study</h3>
+          <div class="table-container">
+            <table class="table is-bordered is-narrow is-fullwidth tw-text-sm">
+              <thead class="has-background-grey-lighter">
+                <tr>
+                  <th>Model</th>
+                  <th class="has-text-centered">H@10</th>
+                  <th class="has-text-centered">H@100</th>
+                  <th class="has-text-centered">Gap</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="has-background-primary-light">
+                  <td><strong>Full graph (ours)</strong></td>
+                  <td class="has-text-centered"><strong>0.505</strong></td>
+                  <td class="has-text-centered"><strong>0.808</strong></td>
+                  <td class="has-text-centered"><strong>0.235</strong></td>
+                </tr>
+                <tr>
+                  <td>Paper-graph only (no G<sub>f</sub>)</td>
+                  <td class="has-text-centered">0.390</td>
+                  <td class="has-text-centered">0.695</td>
+                  <td class="has-text-centered">0.164</td>
+                </tr>
+                <tr>
+                  <td>Formal-graph only (no G<sub>s</sub>)</td>
+                  <td class="has-text-centered">0.135</td>
+                  <td class="has-text-centered">0.360</td>
+                  <td class="has-text-centered">0.073</td>
+                </tr>
+                <tr>
+                  <td>w/o bidirectional fusion</td>
+                  <td class="has-text-centered">0.195</td>
+                  <td class="has-text-centered">0.530</td>
+                  <td class="has-text-centered">0.090</td>
+                </tr>
+                <tr>
+                  <td>w/o stage-1 pretraining</td>
+                  <td class="has-text-centered">0.240</td>
+                  <td class="has-text-centered">0.505</td>
+                  <td class="has-text-centered">0.093</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div class="column is-half">
-            <div class="box tw-h-full">
-              <img src="static/images/fig6.png" alt="H@k retrieval curves across all models" class="mx-auto">
-              <p class="tw-text-left tw-text-xs tw-text-gray-500 tw-mt-4">
-                <strong>H@k curves from k=1 to k=100.</strong> COMPOSE leads at H@10. The formal-graph ablation
-                recovers partial performance (0.510), confirming that Mathlib structure is the primary
-                discriminative signal at this cutoff.
-              </p>
-            </div>
-          </div>
+          <p class="tw-text-sm tw-text-gray-500 tw-mt-3">
+            Removing G<sub>f</sub> drops H@10 from 0.505 to 0.390. Removing bidirectional fusion drops it
+            further to 0.195, showing that cross-encoder interaction — not just having both encoders — drives the gain.
+          </p>
         </div>
       </div>
     </div>
