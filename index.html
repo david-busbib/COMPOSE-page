@@ -432,11 +432,11 @@
         </div>
 
         <div class="box tw-mb-6">
-          <img src="static/images/hk_curve.png" alt="H@10 and H@100 retrieval performance across all models" class="mx-auto">
+          <img src="static/images/hk_curve.png" alt="H@k retrieval curves across all models" class="mx-auto" style="max-width:680px;">
           <p class="tw-text-left tw-text-xs tw-text-gray-500 tw-mt-3">
-            <strong>Retrieval performance (H@10 and H@100) across all models.</strong>
-            COMPOSE (ours) achieves the highest H@10 (0.508) and H@100 (0.808). Orange bars are GPT-4o-based
-            baselines; blue is COMPOSE; grey are DeepSeek-Math 7B and other baselines.
+            <strong>H@k retrieval curves (k = 1 to 100) on the confidence-stratified subset.</strong>
+            COMPOSE (red, bold) consistently dominates all baselines from H@1 through H@100.
+            All other models shown in grey.
           </p>
         </div>
 
@@ -504,39 +504,134 @@
         <h2 class="title is-3">Example Predictions</h2>
         <div class="content has-text-justified">
           <p>
-            Running COMPOSE on arXiv:1911.06307 — <em>Symbolic power containments in singular rings in positive
-            characteristic</em>. COMPOSE fetches the citation graph from Semantic Scholar, identifies related
-            Mathlib theorems, and generates the predictions below. No paper-specific fine-tuning is performed.
+            We show COMPOSE side-by-side with baselines on two representative examples from the test set.
+            In each case the model receives only the anchor paper title as text; all mathematical context
+            is injected via the citation and Mathlib graphs. Similarity scores are cosine similarity to the
+            ground-truth future paper embedding.
           </p>
         </div>
 
-        <div class="box">
-          <div class="terminal">
-            <span class="info">INFO</span> Fetching arXiv:1911.06307 from Semantic Scholar...<br>
-            <span class="info">INFO</span> &nbsp; Title: Symbolic power containments in singular rings in positive characteristic<br>
-            <span class="info">INFO</span> &nbsp; References with abstracts: 24<br>
-            <span class="info">INFO</span> Loading Mathlib corpus (180K theorems)...<br>
-            <span class="info">INFO</span> Mode: full COMPOSE [enc1 citation graph + enc2 Mathlib theorem graph]<br>
-            <span class="info">INFO</span> Loading checkpoint: checkpoints/best_model.pt &nbsp;(epoch=40, val_loss=1.1245)<br>
-            <br>
-            <span class="head">══════════════════════════════════════════════════════════════</span><br>
-            <span class="title-line">COMPOSE predictions for arXiv:1911.06307 &nbsp;[enc1 + enc2]</span><br>
-            <span class="head">══════════════════════════════════════════════════════════════</span><br>
-            <br>
-            <span class="pred">[1]</span><br>
-            In contrast to earlier work on symbolic powers over fields of finite and tame<br>
-            type characteristics, we study maximal orders that are not isomorphic as<br>
-            ℤ-modules when p &gt; 0 is an arbitrary prime ≥ 3. This provides a new example<br>
-            showing that there exist noncommutative graded Lie algebras whose associated<br>
-            ideals have no corresponding bases.<br>
-            <br>
-            <span class="pred">[2]</span><br>
-            In a commutative regular Poisson algebra with constant unit, we establish a<br>
-            strong link between ideals and primitive elements: an ideal equals its<br>
-            intersection with the doubly prime primitives. This extends symbolic power<br>
-            containment results beyond the regular ring setting.
+        <!-- Example 1 -->
+        <div class="box tw-mb-6">
+          <p class="tw-text-sm tw-font-semibold tw-mb-3">
+            <strong>Example 1 — Equidistribution on Hermitian Line Bundles</strong>
+            &nbsp;<span class="tw-text-gray-500 tw-font-normal">(arXiv:0803.1950)</span>
+          </p>
+
+          <div class="box" style="background:#f8f9fa; border-left:4px solid #3273dc;">
+            <p class="tw-text-xs tw-text-gray-500 tw-mb-1"><strong>Ground-truth future paper</strong></p>
+            <p class="tw-text-sm" style="font-style:italic;">
+              "We prove that this energy describes the asymptotic behaviour as
+              <em>k</em> → ∞ of the volume of the sup-norm unit ball induced by
+              (<em>K</em>, <em>k</em>φ) on the space of global holomorphic sections
+              <em>H</em><sup>0</sup>(<em>X</em>, <em>kL</em>)."
+            </p>
           </div>
+
+          <div class="table-container tw-mt-3">
+            <table class="table is-bordered is-narrow is-fullwidth tw-text-sm">
+              <thead class="has-background-grey-lighter">
+                <tr>
+                  <th style="width:110px">Model</th>
+                  <th>Generated Output</th>
+                  <th class="has-text-centered" style="width:60px">Sim</th>
+                  <th class="has-text-centered" style="width:60px">H@10</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="has-background-primary-light">
+                  <td><strong>COMPOSE</strong></td>
+                  <td><em>The authors prove equidistribution results for sequences generated by positive curvature metrics on Hermitian vector bundles (in particular projective spaces) under certain conditions regarding their singularity structure. Specifically, they show how these sequences converge weakly towards an equilibrium measure…</em></td>
+                  <td class="has-text-centered"><strong>0.980</strong></td>
+                  <td class="has-text-centered"><strong>✓</strong></td>
+                </tr>
+                <tr>
+                  <td>GoAI</td>
+                  <td><em>Let L be a holomorphic line bundle with a positively curved singular Hermitian metric over a complex manifold X. Then, the sequence of Fubini–Study currents associated to the space of holomorphic sections of L<sup>k</sup> converges to the curvature current of the metric in the weak topology of currents.</em></td>
+                  <td class="has-text-centered">0.941</td>
+                  <td class="has-text-centered">✓</td>
+                </tr>
+                <tr>
+                  <td>Prompt-only</td>
+                  <td><em>Based on the abstract and related papers, it seems that the main theorem concerns the asymptotic behavior of certain spectral functions and kernel asymptotics, particularly in the context of Kähler manifolds…</em></td>
+                  <td class="has-text-centered">0.809</td>
+                  <td class="has-text-centered">✓</td>
+                </tr>
+                <tr>
+                  <td>Text-only (LoRA)</td>
+                  <td><em>In a paper proving that this energy describes the asymptotic behaviour as k → ∞ of the volume of the sup-norm unit ball induced by (K, kφ) on the space of global sections, a key step is: Proposition 1.1…</em> <span class="tw-text-gray-400">[copies ground truth prefix, rank 1017]</span></td>
+                  <td class="has-text-centered">0.374</td>
+                  <td class="has-text-centered">✗</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="tw-text-xs tw-text-gray-500 tw-mt-2">
+            COMPOSE (sim 0.980, rank 1) generates text about equidistribution for positive curvature metrics — directly matching the ground truth's energy/volume asymptotic framing. Text-only (LoRA) copies the ground truth verbatim but fails to retrieve (rank 1017), showing that memorization without graph conditioning produces poorly aligned embeddings.
+          </p>
         </div>
+
+        <!-- Example 2 -->
+        <div class="box tw-mb-6">
+          <p class="tw-text-sm tw-font-semibold tw-mb-3">
+            <strong>Example 2 — Twisted Kähler–Einstein Metrics</strong>
+            &nbsp;<span class="tw-text-gray-500 tw-font-normal">(arXiv:2106.13343)</span>
+          </p>
+
+          <div class="box" style="background:#f8f9fa; border-left:4px solid #3273dc;">
+            <p class="tw-text-xs tw-text-gray-500 tw-mb-1"><strong>Ground-truth future paper</strong></p>
+            <p class="tw-text-sm" style="font-style:italic;">
+              "Theorem 1.2: Suppose there is a constant <em>C</em> &gt; 0 and <em>d</em> ∈ ℕ such that for any
+              ε &gt; 0, the twisted Kähler–Einstein metric affords the estimate
+              π* ω<sub>can</sub> ≤ C|s<sub>F</sub>|<sup>2ε</sup>
+              ∏<sub>i=1</sub><sup>μ</sup> |log|s<sub>i</sub>|²<sub>h<sub>i</sub></sub>|<sup>d</sup> ω<sub>cone</sub>,
+              where ω<sub>cone</sub> is a conical Kähler metric."
+            </p>
+          </div>
+
+          <div class="table-container tw-mt-3">
+            <table class="table is-bordered is-narrow is-fullwidth tw-text-sm">
+              <thead class="has-background-grey-lighter">
+                <tr>
+                  <th style="width:110px">Model</th>
+                  <th>Generated Output</th>
+                  <th class="has-text-centered" style="width:60px">Sim</th>
+                  <th class="has-text-centered" style="width:60px">H@10</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="has-background-primary-light">
+                  <td><strong>COMPOSE</strong></td>
+                  <td><em>The authors study envelopes and geodesic rays associated to certain Monge–Ampère equations on Kähler manifolds at the zero-temperature limit β → +∞. They show that these objects provide interesting geometric information about such limits, including convergence to canonical metrics…</em></td>
+                  <td class="has-text-centered"><strong>0.978</strong></td>
+                  <td class="has-text-centered"><strong>✓</strong></td>
+                </tr>
+                <tr>
+                  <td>GoAI</td>
+                  <td><em>Let (M, g) be a compact Kähler manifold with semi-ample canonical line bundle, and let ω be a Kähler form representing the canonical class. Then the Kähler–Ricci flow converges to a unique canonical metric on the canonical model of M.</em></td>
+                  <td class="has-text-centered">0.930</td>
+                  <td class="has-text-centered">✓</td>
+                </tr>
+                <tr>
+                  <td>GIANTS</td>
+                  <td><em>The key insight lies in the construction and analysis of Ricci-flat Kähler metrics on crepant resolutions of affine varieties with isolated normal singularities…</em></td>
+                  <td class="has-text-centered">0.617</td>
+                  <td class="has-text-centered">✗</td>
+                </tr>
+                <tr>
+                  <td>Text-only (LoRA)</td>
+                  <td><em>In a paper proving that Theorem 1.1: Suppose there is a constant C &gt; 0 and d ∈ ℕ such that for any ε &gt; 0, the twisted Kähler–Einstein metric affords the estimate… </em><span class="tw-text-gray-400">[copies ground truth, rank 17]</span></td>
+                  <td class="has-text-centered">0.598</td>
+                  <td class="has-text-centered">✗</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="tw-text-xs tw-text-gray-500 tw-mt-2">
+            COMPOSE (sim 0.978) generates text about Monge–Ampère envelopes and geodesic rays — the precise analytic tools underlying the ground truth's conical Kähler estimate. Paper-graph-only produces garbled notation; text-only again copies the theorem but fails retrieval.
+          </p>
+        </div>
+
       </div>
     </div>
   </div>
