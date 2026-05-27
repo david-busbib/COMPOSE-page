@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="COMPOSE: Composing Future Theorems from Citations and Formal Structure">
+  <meta name="description" content="COMPOSE predicts future mathematical theorems by jointly encoding a paper's citation graph and its Mathlib formal theorem dependencies with a dual-graph encoder that conditions a DeepSeek-Math-7B decoder.">
+  <meta name="keywords" content="future theorem prediction, mathematical AI, citation graph, Mathlib, formal mathematics, theorem generation, scientific forecasting">
+  <meta name="author" content="David Busbib, Michael Werman">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="COMPOSE: Composing Future Theorems from Citations and Formal Structure">
+  <meta property="og:description" content="A dual-graph framework that predicts future mathematical theorems by jointly encoding citation context and formal Mathlib theorem structure.">
+  <meta property="og:url" content="https://david-busbib.github.io/COMPOSE/">
+  <meta property="og:image" content="static/images/fig_full.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="COMPOSE: Composing Future Theorems from Citations and Formal Structure">
+  <meta name="twitter:description" content="A dual-graph framework that predicts future mathematical theorems by jointly encoding citation context and formal Mathlib theorem structure.">
+  <meta name="twitter:image" content="static/images/fig_full.png">
+
+  <title>COMPOSE — Composing Future Theorems</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans|Noto+Sans|Castoro&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <style>
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    .results-table th {
+      background: #f5f5f5;
+      padding: 10px 14px;
+      text-align: center;
+      font-weight: 700;
+      border-bottom: 2px solid #dbdbdb;
+    }
+    .results-table td {
+      padding: 8px 14px;
+      text-align: center;
+      border-bottom: 1px solid #efefef;
+    }
+    .results-table td:first-child {
+      text-align: left;
+    }
+    .results-table tr.ours td {
+      font-weight: 700;
+      background: #f0f7ff;
+    }
+    .results-table tr:last-child td {
+      border-bottom: none;
+    }
+    .section-divider {
+      border: none;
+      border-top: 2px solid #e8e8e8;
+      margin: 2rem 0;
+    }
+    .arch-box {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+    .tag-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .metric-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .metric-card .number {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #2563eb;
+      line-height: 1;
+    }
+    .metric-card .label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.4rem;
+    }
+    .group-sep td {
+      border-top: 2px solid #dbdbdb;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+
+          <h1 class="title is-1 publication-title">
+            COMPOSE: Composing Future Theorems<br>from Citations and Formal Structure
+          </h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="mailto:dbusbib@gmail.com" target="_blank">David Busbib</a>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.cs.huji.ac.il/~werman/" target="_blank">Michael Werman</a>
+            </span>
+          </div>
+          <div class="is-size-5 publication-authors" style="margin-top:0.4rem;">
+            <span class="author-block">Hebrew University of Jerusalem</span>
+          </div>
+
+          <div class="column has-text-centered" style="margin-top:1.2rem;">
+            <div class="publication-links">
+
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2506.XXXXX" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://github.com/david-busbib/COMPOSE" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://huggingface.co/TheNisso/compose-checkpoint" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">🤗</span>
+                  <span>Checkpoint</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://huggingface.co/datasets/TheNisso/compose-mathlib-corpus" target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">🤗</span>
+                  <span>Mathlib Corpus</span>
+                </a>
+              </span>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Teaser figure ─────────────────────────────────────────────────────── -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div style="border:1px solid #e0e0e0; border-radius:12px; overflow:hidden; padding:1rem; background:#fafafa;">
+        <img src="static/images/fig_full.png" alt="COMPOSE overview: dual-graph encoder conditions a language model to predict future theorems" style="width:100%;">
+      </div>
+      <p style="margin-top:1rem; color:#555; font-size:0.92rem;">
+        <b>Overview of COMPOSE.</b> Given an anchor paper, COMPOSE builds a scientific citation subgraph G<sub>s</sub> and a Mathlib formal theorem subgraph G<sub>f</sub>. A dual GNN encoder fuses both graphs via bidirectional cross-attention, then conditions a DeepSeek-Math-7B decoder to generate plausible future theorems. The generated claim is embedded and used to retrieve the actual future paper from a 47K-paper pool.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Abstract ──────────────────────────────────────────────────────────── -->
+<section class="section hero is-light" id="abstract">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified" style="background:#fff; padding:1.5rem 2rem; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <p>
+            Anticipating future mathematical claims requires more than extrapolating from prior text: progress is shaped both by evolving scientific ideas and by formal dependency structures that constrain valid results. Existing approaches typically capture only one of these signals.
+          </p>
+          <p>
+            We introduce <strong>grounded future mathematical generation</strong>, the task of predicting plausible future claims from an anchor paper by jointly leveraging citation context and formal theorem structure. We construct a dataset of 108K paired scientific–formal graph examples from arXiv and Mathlib (up to 2023), along with a temporally grounded benchmark of 47K future papers from 2024–2025.
+          </p>
+          <p>
+            We propose <strong>COMPOSE</strong>, a dual-graph framework that builds and fuses scientific and formal graphs to condition a language model for theorem-like prediction. COMPOSE outperforms strong baselines, producing more grounded and mathematically faithful predictions, and achieves the best retrieval performance — recovering the correct future paper in the top 10 in <strong>75.0%</strong> of cases on the confidence-stratified evaluation subset.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Key numbers ────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">At a Glance</h2>
+    <div class="columns is-centered" style="margin-top:1rem;">
+      <div class="column is-3">
+        <div class="metric-card">
+          <div class="number">75.0%</div>
+          <div class="label">H@10 — correct future paper in top 10</div>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="metric-card">
+          <div class="number">108K</div>
+          <div class="label">paired scientific–formal graph samples</div>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="metric-card">
+          <div class="number">47K</div>
+          <div class="label">future papers in the retrieval pool</div>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="metric-card">
+          <div class="number">7B</div>
+          <div class="label">DeepSeek-Math decoder parameters</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Method ─────────────────────────────────────────────────────────────── -->
+<section class="section hero is-light" id="method">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
+
+    <div class="columns is-centered" style="margin-top:1rem;">
+      <div class="column">
+        <div class="content has-text-justified">
+          <p>
+            COMPOSE processes each anchor paper through two parallel paths:
+          </p>
+          <ul>
+            <li><strong>Scientific graph G<sub>s</sub></strong>: up to 30 cited papers, each represented by its E5-large-v2 abstract embedding. A SimpleGNN produces 1152-dim node representations.</li>
+            <li><strong>Formal graph G<sub>f</sub></strong>: a subgraph of Mathlib4 theorems related to the paper, identified by cosine similarity to the abstract and expanded via BFS through proof dependencies. Nodes are initialized from DeepSeek-Math embeddings of theorem statements.</li>
+          </ul>
+          <p>
+            Both graphs are projected into a shared 4224-dim space and fused via <strong>bidirectional cross-attention</strong>. The fused node representations are injected into DeepSeek-Math-7B as cross-attention keys/values at 8 evenly-spaced decoder layers. Only the cross-attention weights are trained (10.7% of parameters), using a two-stage curriculum: graph pretraining with contrastive + alignment losses, then generation fine-tuning with InfoNCE + margin loss.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <div class="arch-box">
+Citation subgraph G_s              Mathlib theorem subgraph G_f
+  [N × 1024]  E5-large-v2            [M × 1024]  DeepSeek-Math embs
+      ↓ SimpleGNN                        ↓ SimpleGNN
+  [N × 1152]                         [M × 1152]
+      ↓ Bridge MLP                       ↓ Bridge MLP
+  [N × 4224]  ←── bidirectional cross-attention ──→  [M × 4224]
+                              ↓ AttnPool
+                    Fused graph representation
+                              ↓ cross-attention at layers 3,7,11,15,19,23,27,31
+                    DeepSeek-Math-7B decoder
+                              ↓
+                    Generated theorem claim
+                              ↓
+                Retrieval over 47K future papers
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem; text-align:center;">
+      <img src="static/images/decoder_full.png" alt="Decoder architecture with cross-attention fusion" style="max-width:80%; border-radius:8px; border:1px solid #ddd;">
+      <p style="color:#666; font-size:0.9rem; margin-top:0.5rem;">Cross-attention layers inserted into DeepSeek-Math-7B. The fused graph representation serves as keys and values; decoder hidden states serve as queries.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Results ────────────────────────────────────────────────────────────── -->
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Results</h2>
+    <p class="has-text-centered" style="color:#666; margin-bottom:1.5rem;">
+      Retrieval on the confidence-stratified evaluation subset — 47K future paper pool (2024–2025).
+      <br>Gap = Tgt-Sim − Neg-Sim (cosine to target minus cosine to 500 random negatives).
+    </p>
+
+    <div class="table-container">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Model</th>
+            <th>H@10</th>
+            <th>H@100</th>
+            <th>Gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ours">
+            <td><strong>COMPOSE (ours)</strong></td>
+            <td><strong>0.750</strong></td>
+            <td><strong>0.845</strong></td>
+            <td><strong>0.240</strong></td>
+          </tr>
+          <tr class="group-sep">
+            <td>Prompt-only</td>
+            <td>0.625</td>
+            <td>0.905</td>
+            <td>0.211</td>
+          </tr>
+          <tr>
+            <td>GIANTS</td>
+            <td>0.640</td>
+            <td>0.940</td>
+            <td>0.207</td>
+          </tr>
+          <tr>
+            <td>GoAI</td>
+            <td>0.520</td>
+            <td>0.855</td>
+            <td>0.202</td>
+          </tr>
+          <tr>
+            <td>CoI-GPT4</td>
+            <td>0.448</td>
+            <td>0.851</td>
+            <td>0.176</td>
+          </tr>
+          <tr>
+            <td>Text-only (LoRA)</td>
+            <td>0.425</td>
+            <td>0.760</td>
+            <td>0.177</td>
+          </tr>
+          <tr>
+            <td>Fixed NN</td>
+            <td>0.130</td>
+            <td>0.510</td>
+            <td>0.108</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="section-divider">
+
+    <h3 class="title is-4 has-text-centered">Ablation Study</h3>
+    <p class="has-text-centered" style="color:#666; margin-bottom:1.5rem;">Each row removes one component from the full COMPOSE model.</p>
+
+    <div class="table-container">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Model</th>
+            <th>H@10</th>
+            <th>H@100</th>
+            <th>Gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ours">
+            <td><strong>Full graph (ours)</strong></td>
+            <td><strong>0.750</strong></td>
+            <td><strong>0.845</strong></td>
+            <td><strong>0.235</strong></td>
+          </tr>
+          <tr>
+            <td>Paper-graph only (no G<sub>f</sub>)</td>
+            <td>0.390</td>
+            <td>—</td>
+            <td>0.164</td>
+          </tr>
+          <tr>
+            <td>Formal-graph only (no G<sub>s</sub>)</td>
+            <td>0.510</td>
+            <td>0.810</td>
+            <td>0.141</td>
+          </tr>
+          <tr>
+            <td>w/o bidirectional fusion</td>
+            <td>0.195</td>
+            <td>0.530</td>
+            <td>0.090</td>
+          </tr>
+          <tr>
+            <td>w/o stage-1 pretraining</td>
+            <td>0.240</td>
+            <td>0.505</td>
+            <td>0.093</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:1.5rem;">
+      <img src="static/images/fig6.png" alt="Retrieval curve across H@k for all models" style="width:100%; border-radius:8px; border:1px solid #eee;">
+      <p style="color:#666; font-size:0.9rem; margin-top:0.5rem; text-align:center;">Retrieval performance across all depths H@1 to H@100. COMPOSE consistently dominates on H@10.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Example output ─────────────────────────────────────────────────────── -->
+<section class="section hero is-light" id="examples">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Example Output</h2>
+    <p class="has-text-centered" style="color:#666; margin-bottom:1.5rem;">
+      Running on arXiv:1911.06307 — <em>Symbolic power containments in singular rings in positive characteristic</em>
+    </p>
+    <div style="background:#1e1e2e; color:#cdd6f4; border-radius:10px; padding:1.5rem 2rem; font-family:'Courier New',monospace; font-size:0.84rem; line-height:1.8;">
+      <span style="color:#89dceb;">INFO</span> Fetching arXiv:1911.06307 from Semantic Scholar...<br>
+      <span style="color:#89dceb;">INFO</span> Loading Mathlib corpus embeddings... (180K theorems)<br>
+      <span style="color:#89dceb;">INFO</span> Mode: full COMPOSE [enc1 citation graph + enc2 Mathlib theorem graph]<br>
+      <span style="color:#89dceb;">INFO</span> Loading checkpoint: checkpoints/best_model.pt  (epoch=40, val_loss=1.1245)<br>
+      <br>
+      <span style="color:#a6e3a1;">══════════════════════════════════════════════════</span><br>
+      <span style="color:#f9e2af;">COMPOSE predictions for arXiv:1911.06307</span><br>
+      <span style="color:#a6e3a1;">══════════════════════════════════════════════════</span><br>
+      <br>
+      <span style="color:#cba6f7;">[1]</span><br>
+      In contrast to earlier work on symbolic powers over fields of finite and tame
+      type characteristics, we study maximal orders that are not isomorphic as
+      ℤ-modules when p&gt;0 is an arbitrary prime ≥ 3. This provides a new example
+      showing that there exist noncommutative graded Lie algebras whose associated
+      ideals have no corresponding bases.<br>
+      <br>
+      <span style="color:#cba6f7;">[2]</span><br>
+      In a commutative regular Poisson algebra with constant unit, we establish
+      a strong link between ideals and primitive elements: an ideal becomes equal
+      to its intersection with the set of doubly prime primitives.
+    </div>
+  </div>
+</section>
+
+<!-- ── BibTeX ─────────────────────────────────────────────────────────────── -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre style="background:#f5f5f5; border-radius:8px; padding:1.2rem; font-size:0.88rem;"><code>@article{busbib2026compose,
+  title     = {{COMPOSE}: Composing Future Theorems from Citations and Formal Structure},
+  author    = {Busbib, David and Werman, Michael},
+  journal   = {arXiv preprint},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This page was built using the
+            <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
