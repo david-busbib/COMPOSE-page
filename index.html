@@ -567,17 +567,16 @@
         <!-- Example 2 -->
         <div class="box tw-mb-6">
           <p class="tw-text-sm tw-font-semibold tw-mb-3">
-            <strong>Example 2 — Twisted Kähler–Einstein Metrics</strong>
-            &nbsp;<span class="tw-text-gray-500 tw-font-normal">(arXiv:2106.13343)</span>
+            <strong>Example 2 — Koopman Operator Convergence</strong>
+            &nbsp;<span class="tw-text-gray-500 tw-font-normal">(arXiv:2206.13659 — dynamical systems)</span>
           </p>
 
           <div class="box" style="background:#f8f9fa; border-left:4px solid #3273dc;">
             <p class="tw-text-sm" style="font-style:italic;">
-              "Theorem 1.2: Suppose there is a constant <em>C</em> &gt; 0 and <em>d</em> ∈ ℕ such that for any
-              ε &gt; 0, the twisted Kähler–Einstein metric affords the estimate
-              π* ω<sub>can</sub> ≤ C|s<sub>F</sub>|<sup>2ε</sup>
-              ∏<sub>i=1</sub><sup>μ</sup> |log|s<sub>i</sub>|²<sub>h<sub>i</sub></sub>|<sup>d</sup> ω<sub>cone</sub>,
-              where ω<sub>cone</sub> is a conical Kähler metric."
+              "We develop an algebraic framework for sequential data assimilation of partially observed dynamical systems.
+              In this framework, Bayesian data assimilation is embedded in a non-abelian operator algebra…
+              the forecast step of data assimilation is represented by a quantum operation induced by the Koopman operator
+              of the dynamical system."
             </p>
           </div>
 
@@ -594,33 +593,33 @@
               <tbody>
                 <tr class="has-background-primary-light">
                   <td><strong>COMPOSE</strong></td>
-                  <td><em>The authors study envelopes and geodesic rays associated to certain Monge–Ampère equations on Kähler manifolds at the zero-temperature limit β → +∞. They show that these objects provide interesting geometric information about such limits, including convergence to canonical metrics…</em></td>
-                  <td class="has-text-centered"><strong>0.978</strong></td>
+                  <td><em>The authors prove a convergence theorem for extended dynamic mode decomposition applied with finite-rank approximations and show how this relates to approximating eigenfunctions and eigenvalues associated with dynamical systems governed by ergodic measures, using empirical data samples only…</em></td>
+                  <td class="has-text-centered"><strong>0.934</strong></td>
                   <td class="has-text-centered"><strong>✓</strong></td>
                 </tr>
                 <tr>
-                  <td>GoAI</td>
-                  <td><em>Let (M, g) be a compact Kähler manifold with semi-ample canonical line bundle, and let ω be a Kähler form representing the canonical class. Then the Kähler–Ricci flow converges to a unique canonical metric on the canonical model of M.</em></td>
-                  <td class="has-text-centered">0.930</td>
-                  <td class="has-text-centered">✓</td>
-                </tr>
-                <tr>
-                  <td>GIANTS</td>
-                  <td><em>The key insight lies in the construction and analysis of Ricci-flat Kähler metrics on crepant resolutions of affine varieties with isolated normal singularities…</em></td>
-                  <td class="has-text-centered">0.617</td>
+                  <td>Text-only (LoRA)</td>
+                  <td><em>We prove that the eigenvalues of the matrix K<sub>N</sub><sup>M</sup> approximate the eigenvalues of K<sup>M</sup><sub>N</sub> when M → ∞.</em> <span class="tw-text-gray-400">[higher sim, rank 34 — fails]</span></td>
+                  <td class="has-text-centered">0.945</td>
                   <td class="has-text-centered">✗</td>
                 </tr>
                 <tr>
-                  <td>Text-only (LoRA)</td>
-                  <td><em>In a paper proving that Theorem 1.1: Suppose there is a constant C &gt; 0 and d ∈ ℕ such that for any ε &gt; 0, the twisted Kähler–Einstein metric affords the estimate… </em><span class="tw-text-gray-400">[copies ground truth, rank 17]</span></td>
-                  <td class="has-text-centered">0.598</td>
+                  <td>Prompt-only</td>
+                  <td><em>Based on the provided abstract and related papers, it seems that the main focus is on using Koopman operator theory to classify and compare iterative algorithms…</em></td>
+                  <td class="has-text-centered">0.708</td>
+                  <td class="has-text-centered">✗</td>
+                </tr>
+                <tr>
+                  <td>GoAI</td>
+                  <td><em>Let K be the Koopman operator acting on the space of observables L²(μ), where μ is an ergodic measure. Then, the eigenvalues of K are contained in the unit circle…</em></td>
+                  <td class="has-text-centered">0.402</td>
                   <td class="has-text-centered">✗</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p class="tw-text-xs tw-text-gray-500 tw-mt-2">
-            COMPOSE (sim 0.978) generates text about Monge–Ampère envelopes and geodesic rays — the precise analytic tools underlying the ground truth's conical Kähler estimate. Paper-graph-only produces garbled notation; text-only again copies the theorem but fails retrieval.
+            COMPOSE (sim 0.934, rank 1) generates a precise description of EDMD convergence with eigenfunctions and ergodic measures — directly matching the ground truth's Koopman operator framework. Notably, Text-only (LoRA) achieves <em>higher</em> embedding similarity (0.945) with a narrow eigenvalue statement, yet fails to retrieve (rank 34) — showing that a correct but decontextualised statement is insufficient without graph conditioning.
           </p>
         </div>
 
