@@ -8,10 +8,10 @@
   <meta name="author" content="David Busbib, Michael Werman">
   <meta property="og:title" content="COMPOSE: Composing Future Theorems from Citations and Formal Structure">
   <meta property="og:description" content="A dual-graph framework that predicts future mathematical claims by jointly encoding citation context and formal Mathlib theorem structure.">
-  <meta property="og:image" content="static/images/fig_full.png">
+  <meta property="og:image" content="static/images/panel_a.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="COMPOSE: Composing Future Theorems from Citations and Formal Structure">
-  <meta name="twitter:image" content="static/images/fig_full.png">
+  <meta name="twitter:image" content="static/images/panel_a.png">
 
   <title>COMPOSE — Future Theorem Prediction</title>
 
@@ -369,7 +369,7 @@
         </div>
 
         <div class="box tw-mb-6">
-          <h3 class="title is-5">Retrieval on the confidence-stratified subset (47K pool)</h3>
+          <h3 class="title is-5">Retrieval on the full test set (47K pool)</h3>
           <div class="table-container">
             <table class="table is-bordered is-striped is-narrow is-fullwidth tw-text-sm">
               <thead class="has-background-grey-lighter">
@@ -432,8 +432,7 @@
           <img src="static/images/hk_curve.png" alt="H@k retrieval curves across all models" class="mx-auto" style="max-width:680px;">
           <p class="tw-text-left tw-text-xs tw-text-gray-500 tw-mt-3">
             <strong>H@k retrieval curves (k = 1 to 100) on the confidence-stratified subset.</strong>
-            COMPOSE (red, bold) consistently dominates all baselines from H@1 through H@100.
-            All other models shown in grey.
+            COMPOSE (blue squares) leads at k = 5, 10, and 20.
           </p>
         </div>
 
@@ -575,6 +574,7 @@
           </p>
 
           <div class="box" style="background:#f8f9fa; border-left:4px solid #3273dc;">
+            <p class="tw-text-xs tw-text-gray-500 tw-mb-1"><strong>Ground-truth future paper</strong></p>
             <p class="tw-text-sm" style="font-style:italic;">
               "We develop an algebraic framework for sequential data assimilation of partially observed dynamical systems.
               In this framework, Bayesian data assimilation is embedded in a non-abelian operator algebra…
