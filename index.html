@@ -155,19 +155,19 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <div style="border:1px solid rgba(0,0,0,0.10); border-radius:14px; padding:1rem;">
-        <div style="display:flex; gap:0.3rem; align-items:flex-start;">
-          <div style="flex:1;">
+        <div style="display:flex; flex-direction:column; gap:0.8rem;">
+          <div>
             <img src="static/images/panel_a.png" alt="COMPOSE data construction" style="width:100%;height:auto;">
           </div>
-          <div style="flex:1;">
+          <div>
             <img src="static/images/panel_b.png" alt="COMPOSE model architecture" style="width:100%;height:auto;">
           </div>
         </div>
       </div>
       <p class="tw-text-left tw-text-base tw-text-gray-600 tw-mt-4">
-        <b>Overview of COMPOSE.</b> (<b>Left</b>) Data construction: given an anchor paper and its citation graph,
+        <b>Overview of COMPOSE.</b> (<b>Top</b>) Data construction: given an anchor paper and its citation graph,
         we build a scientific graph of paper and theorem nodes, then align informal theorems to Mathlib4 to construct
-        a formal dependency graph. (<b>Right</b>) Model architecture: the scientific and formal graphs are encoded by
+        a formal dependency graph. (<b>Bottom</b>) Model architecture: the scientific and formal graphs are encoded by
         dedicated GNNs, fused via cross-attention (&oplus;), and used to condition a DeepSeek-Math-7B decoder that
         generates a predicted future research claim, which is then used to retrieve the actual future paper from a 47K pool.
       </p>
